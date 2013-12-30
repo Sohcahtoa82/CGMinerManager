@@ -9,33 +9,33 @@ CGMinerManager (Hereafter abbreviated "CM") is a program for automatically adjus
 
 https://github.com/Sohcahtoa82/CGMinerManager for source code and detailed instructions.
 
-CGMinerManager is being written by a broke university student.  Please consider donating to any of these addresses:
-Bitcoin: 19Mz5onCDfvKwoHUBEeiVdbhuuQQh989yf
-Dogecoin: DHjpPYZBCr92T9kXQnwjqjw2Jfjeix4eHB
-Litecoin: LUPUMKvbWYgxcznJNh5mwB2svk8G3FpyyF
+CGMinerManager is being written by a broke university student.  Please consider donating to any of these addresses:  
+Bitcoin: 19Mz5onCDfvKwoHUBEeiVdbhuuQQh989yf  
+Dogecoin: DHjpPYZBCr92T9kXQnwjqjw2Jfjeix4eHB  
+Litecoin: LUPUMKvbWYgxcznJNh5mwB2svk8G3FpyyF  
 
 Basic Usage
 ===========
 
-Usage: java CGMinerManager [options]
-  --help
-      Displays this help.
-  --host | -h <host>
-      IP of the the CGMiner to interface with.  Default: "localhost"
-  --port | -p <port#>
-      Port of the CGMiner to interface with.  Default: 4028
-  --polltimer | -pt <ms>
-      Polling frequency in milliseconds.  Default: 5000
-  --idletimer | -it <sec>
-      How long the computer needs to be idle before switching to the idle
-      intensity in seconds.  Default: 1800 (30 minutes)
-  --idleinensity | -ii <intensity>
-      Intensity to use while the computer is idle.  Default: 20
-  --inuseintensity | -iui <intensity>
-      Intensity to use while the computer is in use.  Default: 17
-  --throttler | -t <process> <intensity>
-      Drops intensity to the specified value when the named process is running.
-      Note that the process name is NOT case-sensitive.
+Usage: java CGMinerManager [options]  
+  --help  
+      Displays this help.  
+  --host | -h <host>  
+      IP of the the CGMiner to interface with.  Default: "localhost"  
+  --port | -p <port#>  
+      Port of the CGMiner to interface with.  Default: 4028  
+  --polltimer | -pt <ms>  
+      Polling frequency in milliseconds.  Default: 5000  
+  --idletimer | -it <sec>  
+      How long the computer needs to be idle before switching to the idle  
+      intensity in seconds.  Default: 1800 (30 minutes)  
+  --idleinensity | -ii <intensity>  
+      Intensity to use while the computer is idle.  Default: 20  
+  --inuseintensity | -iui <intensity>  
+      Intensity to use while the computer is in use.  Default: 17  
+  --throttler | -t <process> <intensity>  
+      Drops intensity to the specified value when the named process is running.  
+      Note that the process name is NOT case-sensitive.  
 
 Detailed Instructions
 =====================
