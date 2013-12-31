@@ -81,9 +81,9 @@ public class CGMinerManager {
 	}
 	
 	private boolean parseArgs(String[] args) throws IndexOutOfBoundsException, NumberFormatException {
-		if (args.length == 0) {
-			return false;
-		}
+		//if (args.length == 0) {
+		//	return false;
+		//}
 		
 		for (int i = 0; i < args.length; i++){
 			if (args[i].equals("--help") || args[i].equals("-h")){
@@ -122,7 +122,7 @@ public class CGMinerManager {
 	}
 	
 	private static void printUsage(){
-		System.out.println("Usage: java CGMinerManager [options]");
+		System.out.println("Usage: java -jar CGMinerManager [options]");
 		System.out.println("  --help");
 		System.out.println("      Displays this help.");
 		System.out.println("  --host | -h <host>");
