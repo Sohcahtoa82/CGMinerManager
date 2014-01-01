@@ -38,7 +38,7 @@ public class CGMinerManager {
 	String throttleReason = "Computer is in use.";
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		System.out.println("CGMiner Intensity Manager v0.1 by Sohcahtoa82");
+		System.out.println("CGMiner Intensity Manager v0.2 by Sohcahtoa82");
 		System.out.println("https://github.com/Sohcahtoa82/CGMinerManager for source code and detailed instructions.");
 		System.out.println("Donation addresses:");
 		System.out.println("Bitcoin: 19Mz5onCDfvKwoHUBEeiVdbhuuQQh989yf");
@@ -147,7 +147,7 @@ public class CGMinerManager {
 	}
 	
 	private static void printUsage(){
-		System.out.println("Usage: java -jar CGMinerManager [options]");
+		System.out.println("Usage: java -jar CGMinerManager.jar [options]");
 		System.out.println("  --help");
 		System.out.println("      Displays this help.");
 		System.out.println("  --host | -h <host>");

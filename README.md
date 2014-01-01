@@ -17,7 +17,7 @@ Litecoin: LUPUMKvbWYgxcznJNh5mwB2svk8G3FpyyF
 Basic Usage
 ===========
 
-Usage: java -jar CGMinerManager [options]  
+Usage: java -jar CGMinerManager.jar [options]  
   --help  
       Displays this help.  
   --host | -h <host>  
