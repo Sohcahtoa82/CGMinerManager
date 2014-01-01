@@ -1,9 +1,9 @@
 About
 =====
 
-CGMinerManager v0.2 by Sohcahtoa82
+CGMinerManager v0.2.1 by Sohcahtoa82
 
-Binary at https://www.dropbox.com/s/wniq3ca5ny9sr7s/CGMinerManager_v0.2.zip
+Binary at https://www.dropbox.com/s/e8vctacie79ray5/CGMinerManager_v0.2.1.zip
 
 CGMinerManager (Hereafter abbreviated "CM") is a program for automatically adjusting the intensity of cgminer's mining based on running programs and whether or not the computer is in use, designed for people who want to be able to use their computer and even play games while mining without manually having to remember to adjust cgminer's intensity and maximizing the use of the GPU while the computer is not in use.
 
@@ -67,6 +67,16 @@ Known Bugs
 
 Change Log
 ==========
+
+Version 0.2.1 - Released Jan 1, 2014
+------------------------------------
+https://www.dropbox.com/s/e8vctacie79ray5/CGMinerManager_v0.2.1.zip
+Binary at https://www.dropbox.com/s/e8vctacie79ray5/CGMinerManager_v0.2.1.zip
+- Fixed so running applications actually DO take priority over full-screen throttling
+- Prints an error and exits if getNewThrottleLevel() fails
+- Properly handles when attempting to get the list of running tasks fails
+- Intensity will always be set to the "in use" intensity upon starting
+- Added a .bat file to load CGMinerManager with default settings
 
 Version 0.2 - Released Dec 31, 2014
 -----------------------------------

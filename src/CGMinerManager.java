@@ -21,7 +21,8 @@ public class CGMinerManager {
 	int intensityIdle = 20;
 	int intensityInUse = 17;
 	int intensityFullScreen = 12;
-	boolean useFullScreen = false;
+	boolean useFullScreenThrottling = false;
+	boolean useAppThrottling = false;
 	int fsX;
 	int fsY;
 	Color fsColor;
@@ -38,7 +39,7 @@ public class CGMinerManager {
 	String throttleReason = "Computer is in use.";
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		System.out.println("CGMiner Intensity Manager v0.2 by Sohcahtoa82");
+		System.out.println("CGMiner Intensity Manager v0.2.1 by Sohcahtoa82");
 		System.out.println("https://github.com/Sohcahtoa82/CGMinerManager for source code and detailed instructions.");
 		System.out.println("Donation addresses:");
 		System.out.println("Bitcoin: 19Mz5onCDfvKwoHUBEeiVdbhuuQQh989yf");
@@ -51,7 +52,7 @@ public class CGMinerManager {
 	
 	CGMinerManager(String[] args) throws IOException, InterruptedException {
 		throttlers = new ArrayList<Throttler>();
-		int throttleLevel = intensityInUse;
+		int throttleLevel = 0;
 		
 		try {
 			if (!parseArgs(args)){
@@ -69,6 +70,10 @@ public class CGMinerManager {
 		}
 		
 		System.out.println("Press CTRL-C to stop.");
+		throttleLevel = intensityInUse;
+		setIntensity(throttleLevel);
+		System.out.print((new java.util.Date()).toString() + " ");
+		System.out.printf("Setting intensity to %d because computer is in use.", throttleLevel);
 		
 		while(true) {
 			//while (socketIn != null && socketIn.ready()) {
@@ -76,6 +81,8 @@ public class CGMinerManager {
 			//}
 			int newThrottleLevel = getNewThrottleLevel();
 			if (newThrottleLevel == -1){
+				System.out.println("An error occurred while getting the new throttle level.");
+				System.out.println("Exiting.");
 				return;
 			}
 			
@@ -115,6 +122,7 @@ public class CGMinerManager {
 				throttler.process = args[i + 1].toUpperCase();
 				throttler.intensity = Integer.parseInt(args[i + 2]);
 				throttlers.add(throttler);
+				useAppThrottling = true;
 				i += 2;
 			} else if (args[i].equals("--idleintensity") || args[i].equals("-ii")){
 				intensityIdle = Integer.parseInt(args[i+1]);
@@ -131,7 +139,7 @@ public class CGMinerManager {
 					i += 3;
 					continue;
 				}
-				useFullScreen = true;
+				useFullScreenThrottling = true;
 				intensityFullScreen = Integer.parseInt(args[i+1]);
 				fsX = Integer.parseInt(args[i+2]);
 				fsY = Integer.parseInt(args[i+3]);
@@ -194,13 +202,15 @@ public class CGMinerManager {
 		if (runningFullScreenApp() && processThrottleLevel == intensityIdle) {
 			newThrottleLevel = intensityFullScreen;
 			throttleReason = "a full-screen app is running.";
+		} else if (processThrottleLevel != intensityIdle) {
+			newThrottleLevel = processThrottleLevel;
 		}
 		
 		return newThrottleLevel;
 	}
 	
 	private boolean runningFullScreenApp(){
-		if (!useFullScreen) {
+		if (!useFullScreenThrottling) {
 			return false;
 		}
 		Color color = robot.getPixelColor(fsX, fsY);
@@ -209,8 +219,14 @@ public class CGMinerManager {
 	
 	private int getProcessThrottleLevel(){
 		int processThrottleLevel = intensityIdle;
+		if (!useAppThrottling) {
+			return processThrottleLevel;
+		}
 		ArrayList<String> processes = getRunningProcesses();
 		if (processes == null) {
+			System.out.println("getRunningProcesses() failed.  Throttling based on running applications");
+			System.out.println("will be disabled.");
+			useAppThrottling = false;
 			return -1;
 		}
 		for(String process : processes){
