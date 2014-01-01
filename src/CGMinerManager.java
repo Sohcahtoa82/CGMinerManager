@@ -1,5 +1,8 @@
+import java.awt.AWTException;
+import java.awt.Color;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.Robot;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,18 +17,24 @@ public class CGMinerManager {
 		int intensity;
 	}
 	
-	int TIMER_LEN = 5000;
-	int INTENSITY_IDLE = 20;
-	int INTENSITY_INUSE = 17;
-	long IDLE_TIMEOUT = 1000 * 60 * 30;
+	int timerLen = 5000;
+	int intensityIdle = 20;
+	int intensityInUse = 17;
+	int intensityFullScreen = 12;
+	boolean useFullScreen = false;
+	int fsX;
+	int fsY;
+	Color fsColor;
+	long idleTimeout = 1000 * 60 * 30;
 	Socket socket;
 	PrintWriter socketOut;
 	BufferedReader socketIn;
 	ArrayList<Throttler> throttlers;
 	long idleStart = System.currentTimeMillis();
 	Point lastPoint = MouseInfo.getPointerInfo().getLocation();
-	String HOST = "localhost";
-	int PORT = 4028;
+	String host = "localhost";
+	int port = 4028;
+	Robot robot;
 	String throttleReason = "Computer is in use.";
 
 	public static void main(String[] args) throws IOException, InterruptedException {
@@ -36,12 +45,13 @@ public class CGMinerManager {
 		System.out.println("Dogecoin: DHjpPYZBCr92T9kXQnwjqjw2Jfjeix4eHB");
 		System.out.println("Litecoin: LUPUMKvbWYgxcznJNh5mwB2svk8G3FpyyF");
 		System.out.println();
+		
 		new CGMinerManager(args);
 	}
 	
 	CGMinerManager(String[] args) throws IOException, InterruptedException {
 		throttlers = new ArrayList<Throttler>();
-		int throttleLevel = INTENSITY_INUSE;
+		int throttleLevel = intensityInUse;
 		
 		try {
 			if (!parseArgs(args)){
@@ -76,7 +86,7 @@ public class CGMinerManager {
 				setIntensity(newThrottleLevel);
 			}
 			
-			Thread.sleep(TIMER_LEN);
+			Thread.sleep(timerLen);
 		}
 	}
 	
@@ -89,16 +99,16 @@ public class CGMinerManager {
 			if (args[i].equals("--help") || args[i].equals("-h")){
 				return false;
 			} else if (args[i].equals("--host") || args[i].equals("-h")){
-				HOST = args[i + 1];
+				host = args[i + 1];
 				i++;
 			} else if (args[i].equals("--port") || args[i].equals("-p")){
-				PORT = Integer.parseInt(args[i + 1]);
+				port = Integer.parseInt(args[i + 1]);
 				i++;
 			} else if (args[i].equals("--polltimer") || args[i].equals("-pt")){
-				TIMER_LEN = Integer.parseInt(args[i + 1]);
+				timerLen = Integer.parseInt(args[i + 1]);
 				i++;
 			} else if (args[i].equals("--idletimer") || args[i].equals("-it")){
-				IDLE_TIMEOUT = Long.parseLong(args[i + 1]) * 1000 * 60;
+				idleTimeout = Long.parseLong(args[i + 1]) * 1000 * 60;
 				i++;
 			} else if (args[i].equals("--throttler") || args[i].equals("-t")){
 				Throttler throttler = new Throttler();
@@ -107,11 +117,26 @@ public class CGMinerManager {
 				throttlers.add(throttler);
 				i += 2;
 			} else if (args[i].equals("--idleintensity") || args[i].equals("-ii")){
-				INTENSITY_IDLE = Integer.parseInt(args[i+1]);
+				intensityIdle = Integer.parseInt(args[i+1]);
 				i++;
 			} else if (args[i].equals("--inuseintensity") || args[i].equals("-iui")){
-				INTENSITY_INUSE = Integer.parseInt(args[i+1]);
+				intensityInUse = Integer.parseInt(args[i+1]);
 				i++;
+			} else if (args[i].equals("--fullscreen") || args[i].equals("-fs")) {
+				try {
+					robot = new Robot();
+				} catch (AWTException e) {
+					System.out.println("-fs was specified, but the Robot object could not be created.");
+					System.out.println("Full-screen detection will be disabled.");
+					i += 3;
+					continue;
+				}
+				useFullScreen = true;
+				intensityFullScreen = Integer.parseInt(args[i+1]);
+				fsX = Integer.parseInt(args[i+2]);
+				fsY = Integer.parseInt(args[i+3]);
+				fsColor = robot.getPixelColor(fsX, fsY);
+				i += 3;
 			} else {
 				System.out.println("Unknown option: " + args[i]);
 				return false;
@@ -138,47 +163,70 @@ public class CGMinerManager {
 		System.out.println("      Intensity to use while the computer is idle.  Default: 20");
 		System.out.println("  --inuseintensity | -iui <intensity>");
 		System.out.println("      Intensity to use while the computer is in use.  Default: 17");
+		System.out.println("  --fullscreen | fs <intensity> <x> <y>");
+		System.out.println("      Enable the use of intensity adjustment when a full--screen program is");
+		System.out.println("      detected.  If this option is not specified, this feature will be");
+		System.out.println("      disabled.  See README for more information.");
 		System.out.println("  --throttler | -t <process> <intensity>");
 		System.out.println("      Drops intensity to the specified value when the named process is running.");
 		System.out.println("      Note that the process name is NOT case-sensitive.");
 		System.out.println();
-		System.out.println("Example: java CGMinerManager -pt 1000 -it 15 -ii 19 -iui 16 -t game1.exe 13 -t game2.exe 9");		
+		System.out.println("Example: java CGMinerManager -pt 1000 -it 15 -ii 19 -iui 16 -t game1.exe 13 -t game2.exe 9 -fs 12 0 1049");		
 	}
 	
 	private int getNewThrottleLevel() {
-		int newThrottleLevel = INTENSITY_INUSE;
+		int newThrottleLevel = intensityInUse;
 		throttleReason = "computer is in use.";
 		
 		Point currPoint = MouseInfo.getPointerInfo().getLocation();
 		if (currPoint.x != lastPoint.x || currPoint.y != lastPoint.y){
 			idleStart = System.currentTimeMillis();
-			newThrottleLevel = INTENSITY_INUSE;
+			newThrottleLevel = intensityInUse;
 			throttleReason = "computer is in use.";
-		} else if (System.currentTimeMillis() - idleStart > IDLE_TIMEOUT) {
-			newThrottleLevel = INTENSITY_IDLE;
+		} else if (System.currentTimeMillis() - idleStart > idleTimeout) {
+			newThrottleLevel = intensityIdle;
 			throttleReason = "computer is idle.";
 		}
 		lastPoint = currPoint;
 		
+		int processThrottleLevel = getProcessThrottleLevel();
+		
+		if (runningFullScreenApp() && processThrottleLevel == intensityIdle) {
+			newThrottleLevel = intensityFullScreen;
+			throttleReason = "a full-screen app is running.";
+		}
+		
+		return newThrottleLevel;
+	}
+	
+	private boolean runningFullScreenApp(){
+		if (!useFullScreen) {
+			return false;
+		}
+		Color color = robot.getPixelColor(fsX, fsY);
+		return !color.equals(fsColor);
+	}
+	
+	private int getProcessThrottleLevel(){
+		int processThrottleLevel = intensityIdle;
 		ArrayList<String> processes = getRunningProcesses();
 		if (processes == null) {
 			return -1;
 		}
 		for(String process : processes){
 			for (Throttler throttler : throttlers){
-				if (throttler.process.equals(process) && throttler.intensity < newThrottleLevel) {
-					newThrottleLevel = throttler.intensity;
+				if (throttler.process.equals(process) && throttler.intensity < processThrottleLevel) {
+					processThrottleLevel = throttler.intensity;
 					throttleReason = throttler.process + " is running.";
 				}
 			}
 		}
-		
-		return newThrottleLevel;
+		return processThrottleLevel;
 	}
 	
 	private void setIntensity(int intensity) {
 		try {
-			socket = new Socket(HOST, PORT);
+			socket = new Socket(host, port);
 			socketOut = new PrintWriter(socket.getOutputStream(), true);
 			socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			String cmd = "{\"command\":\"gpuintensity\",\"parameter\":\"0," + Integer.toString(intensity) + "\"}";

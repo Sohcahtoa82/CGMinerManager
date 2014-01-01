@@ -1,9 +1,9 @@
 About
 =====
 
-CGMinerManager v0.1 by Sohcahtoa82
+CGMinerManager v0.2 by Sohcahtoa82
 
-Binary at https://www.dropbox.com/s/i39dc98kgwqrly5/CGMinerManager_v0.1.zip
+Binary at https://www.dropbox.com/s/wniq3ca5ny9sr7s/CGMinerManager_v0.2.zip
 
 CGMinerManager (Hereafter abbreviated "CM") is a program for automatically adjusting the intensity of cgminer's mining based on running programs and whether or not the computer is in use, designed for people who want to be able to use their computer and even play games while mining without manually having to remember to adjust cgminer's intensity and maximizing the use of the GPU while the computer is not in use.
 
@@ -33,6 +33,10 @@ Usage: java -jar CGMinerManager [options]
       Intensity to use while the computer is idle.  Default: 20  
   --inuseintensity | -iui <intensity>  
       Intensity to use while the computer is in use.  Default: 17  
+  --fullscreen | -fs <intensity> <x> <y>
+      Enable the use of intensity adjustment when a full--screen program is
+	  detected.  If this option is not specified, this feature will be
+	  disabled.  See README for more information.
   --throttler | -t <process> <intensity>  
       Drops intensity to the specified value when the named process is running.  
       Note that the process name is NOT case-sensitive.  
@@ -52,6 +56,8 @@ This would make CM poll the running list of applications once per second.  If ga
 
 Running programs take priority over the idleness of the computer.  Also, the intensity gets set to the LOWEST throttler.  For example, in the example above, if both games were being run at the same time, the intensity would get set to 9.
 
+If the --fullscreen option is specified, then the pixel at location x, y is checked when the program starts.  Note that 0,0 is the top-left corner of the screen, and 1649, 1049 will be the bottom-right corner if you're running a 1650x1050 monitor.  This pixel will be checked on every poll cycle, and if it is different from the value it was when CGMinerManager was launched, then the intensity will be adjusted to the value specified on the command line.  Note that throttling by running application takes priority, so if the full-screen app intensity is set to 12, but you're running MyApp.exe with a "-t MyApp.exe 13" command line, then the intensity will be set to 13.
+
 Known Bugs
 ==========
 
@@ -62,6 +68,12 @@ Known Bugs
 Change Log
 ==========
 
+Version 0.2 - Released Dec 31, 2014
+-----------------------------------
+https://www.dropbox.com/s/wniq3ca5ny9sr7s/CGMinerManager_v0.2.zip
+- Added --fullscreen feature to test enable throttling when a full-screen application is running.
+
 Version 0.1 - Released Dec 30, 2014
 -----------------------------------
+https://www.dropbox.com/s/i39dc98kgwqrly5/CGMinerManager_v0.1.zip
 - First public release.
