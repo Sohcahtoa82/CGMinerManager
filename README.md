@@ -56,7 +56,7 @@ This would make CM poll the running list of applications once per second.  If ga
 
 Running programs take priority over the idleness of the computer.  Also, the intensity gets set to the LOWEST throttler.  For example, in the example above, if both games were being run at the same time, the intensity would get set to 9.
 
-If the --fullscreen option is specified, then the pixel at location x, y is checked when the program starts.  Note that 0,0 is the top-left corner of the screen, and 1649, 1049 will be the bottom-right corner if you're running a 1650x1050 monitor.  This pixel will be checked on every poll cycle, and if it is different from the value it was when CGMinerManager was launched, then the intensity will be adjusted to the value specified on the command line.  Note that throttling by running application takes priority, so if the full-screen app intensity is set to 12, but you're running MyApp.exe with a "-t MyApp.exe 13" command line, then the intensity will be set to 13.
+If the --fullscreen option is specified, then the pixel at location x, y is checked when the program starts.  Note that 0,0 is the top-left corner of the screen, and 1679, 1049 will be the bottom-right corner if you're running a 1680x1050 monitor.  This pixel will be checked on every poll cycle, and if it is different from the value it was when CGMinerManager was launched, then the intensity will be adjusted to the value specified on the command line.  Note that throttling by running application takes priority, so if the full-screen app intensity is set to 12, but you're running MyApp.exe with a "-t MyApp.exe 13" command line, then the intensity will be set to 13.
 
 Known Bugs
 ==========
