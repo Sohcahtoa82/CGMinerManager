@@ -39,7 +39,7 @@ public class CGMinerManager {
 	String throttleReason = "Computer is in use.";
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		System.out.println("CGMiner Intensity Manager v0.2.1 by Sohcahtoa82");
+		System.out.println("CGMiner Intensity Manager v0.2.2 by Sohcahtoa82");
 		System.out.println("https://github.com/Sohcahtoa82/CGMinerManager for source code and detailed instructions.");
 		System.out.println("Donation addresses:");
 		System.out.println("Bitcoin: 19Mz5onCDfvKwoHUBEeiVdbhuuQQh989yf");
@@ -115,7 +115,7 @@ public class CGMinerManager {
 				timerLen = Integer.parseInt(args[i + 1]);
 				i++;
 			} else if (args[i].equals("--idletimer") || args[i].equals("-it")){
-				idleTimeout = Long.parseLong(args[i + 1]) * 1000 * 60;
+				idleTimeout = Long.parseLong(args[i + 1]) * 1000;
 				i++;
 			} else if (args[i].equals("--throttler") || args[i].equals("-t")){
 				Throttler throttler = new Throttler();
